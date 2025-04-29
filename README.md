@@ -50,86 +50,75 @@ Principais tabelas:
 ## 📌 Visão Geral
 Este documento descreve a arquitetura e os componentes principais do Sistema de Consultas Médicas.
 
-O foco está em **escalabilidade**, **segurança** e **robustez** para garantir um serviço eficiente e confiável para usuários (pacientes, médicos e administradores).
+O foco está em confiabilidade, segurança e manutenibilidade, adotando uma arquitetura monolítica para facilitar o desenvolvimento e a integração inicial dos módulos do sistema.
 
 ## 📐 Arquitetura Geral
 
-O sistema adota uma arquitetura de microsserviços orientada a serviços, seguindo boas práticas de escalabilidade.
+O sistema foi desenvolvido como uma aplicação monolítica, onde todas as funcionalidades – autenticação, agendamento, relatórios, envio de e-mails, entre outras – são integradas em um único projeto back-end.
 
 ### 🔁 Fluxo de Funcionamento
-1. Usuário acessa o sistema via front-end (web/mobile).
-2. Requisições são roteadas por um **load balancer** para os servidores de aplicação.
-3. As **APIs** processam as requisições, interagindo com:
-   - Banco de dados relacional;
-   - Fila de mensagens para tarefas assíncronas;
-   - Armazenamento de arquivos;
-   - Serviços externos (e-mails, etc).
-4. O sistema monitora todas as interações para garantir disponibilidade e detectar falhas rapidamente.
+
+1. O usuário acessa a aplicação via navegador (front-end web responsivo).
+2. As requisições são tratadas diretamente por um único servidor da aplicação.
+3. A aplicação monolítica realiza todas as operações de forma centralizada:
+ - Processamento das regras de negócio;
+ - Acesso ao banco de dados;
+ - Geração de relatórios e envio de e-mails;
+ - Armazenamento e acesso a arquivos.
+
+Logs e métricas são gerados pela própria aplicação para facilitar o monitoramento e a manutenção.
 
 ## 🧱 Componentes da Arquitetura
 
 ### 🎯 Front-end
-- Interface Web/Mobile;
-- Envia requisições HTTP (JSON/HTML) à API;
-- Integrado com autenticação/autorização.
-
-### ⚖ Load Balancer
-- **Tecnologia:** NGINX;
-- Balanceamento de tráfego entre instâncias;
-- Suporte à escalabilidade horizontal e alta disponibilidade.
+- Interface Web desenvolvida em React.js
+- Interface Mobile desenvolvida em Flutter
+- Comunicação via requisições HTTP (REST) com o back-end
+- Responsiva
+- Integrada com sistema de autenticação/autorização.
 
 ### 🧠 API (Back-end)
-- **Tecnologia:** Spring Boot (Java);
-- Endpoints RESTful;
-- Regras de negócio e autenticação via JWT;
-- Comunicação com banco, filas, e armazenamento.
+- **Tecnologia:** Spring Boot (Java)
+- Estruturada em camadas (controladores, serviços, repositórios)
+- Controle de autenticação e autorização via JWT
+- Comunicação com banco, filas, e armazenamento
+- Acesso direto ao banco de dados
 
 ### 🔒 Camada de Segurança
 - **Framework:** Spring Security;
 - Autenticação via `/login`;
 - Tokens JWT;
-- Autorização baseada em roles (paciente, médico, admin).
+- Autorização baseada em roles (paciente, médico, admin)
+- Criptografia de senhas com BCrypt
 
 ### 🗃 Banco de Dados
 - **Tecnologia:** PostgreSQL;
 - Armazena usuários, agendamentos, prontuários;
-- Acesso via JPA/Hibernate.
+- Integração via JPA/Hibernate.
 
-### ✉ Message Broker
-- **Tecnologia:** RabbitMQ;
-- Processa tarefas assíncronas (e-mails, relatórios);
-- Reduz carga dos servidores.
-
-### ⚙ Queue Worker
-- **Tecnologia:** Java ou Node.js;
-- Consome mensagens da fila;
-- Executa tarefas em segundo plano (notificações, exames);
-- Integra com e-mail e armazenamento.
-
-### 📤 Serviço de E-mail
-- **Tecnologia:** SMTP via SendGrid;
-- Envio de e-mails transacionais (confirmação, lembretes, etc).
+### ✉️ Envio de E-mails
+- Tecnologia: JavaMailSender / SMTP (ex: SendGrid);
+- Envio de e-mails diretamente pelo monólito;
+- Confirmações de agendamento, lembretes e notificações.
 
 ### 📂 Armazenamento de Arquivos
 - **Tecnologia:** Amazon S3 (ou compatível);
 - Armazena documentos médicos, RX, exames;
-- Proteção com links temporários e ACLs.
+- Acesso protegido e com URLs temporárias quando necessário.
 
 ### 📈 Monitoramento e Observabilidade
-- **Logs:** ELK Stack (Elasticsearch, Logstash, Kibana);
-- **Métricas:** Prometheus + Grafana;
-- **Alertas:** Alertmanager;
-- Health checks via Spring Boot Actuator.
+- Logs locais com possibilidade de integração com ELK;
+- Monitoramento de saúde da aplicação com Spring Boot Actuator;
+- Métricas básicas e endpoints de status para diagnóstico.
 
-## 🔄 Escalabilidade
-- Múltiplas instâncias da API com load balancer;
-- Filas desacoplam tarefas pesadas;
-- Banco replicável/particionável;
-- Serviços stateless para scaling horizontal (containers/Kubernetes).
+🔄 Manutenibilidade
+- Estrutura modular dentro do monólito facilita a organização do código;
+- Separação clara entre camadas de apresentação, negócio e dados;
+- Facilita testes integrados e manutenção em ambientes pequenos/médios.
 
 ## 🔐 Segurança
 - Autenticação com JWT;
 - Senhas com hashing (BCrypt);
 - Controle de acesso por roles;
-- CORS configurado;
-- Firewall e segurança em nível de rede.
+- CORS configurado para evitar acessos não autorizados;
+- Camada de segurança configurada via Spring Security.
