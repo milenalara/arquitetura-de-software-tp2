@@ -122,3 +122,97 @@ Logs e métricas são gerados pela própria aplicação para facilitar o monitor
 - Controle de acesso por roles;
 - CORS configurado para evitar acessos não autorizados;
 - Camada de segurança configurada via Spring Security.
+
+
+
+# Roteiro para Evolução do Sistema - Back-end
+
+
+## FASE 1 – MONOLITO INICIAL (MVP)
+
+- **Estilo Arquitetural**: Monolítico  
+- **Padrão Arquitetural**: MVC
+
+### Cenário
+A clínica é pequena, há poucos usuários e o sistema atende a um único ponto de atendimento. O foco é validar o funcionamento básico da aplicação.
+
+### Características Técnicas
+- Projeto único (ex: Spring Boot)
+- Controladores REST com rotas como: `/consultas`, `/medicos`, `/pacientes`, `/login`
+- Autenticação básica com JWT
+- Banco de dados relacional único
+- Deploy simples (JAR ou container único)
+
+### Motivo para Escalabilidade após Fase 1
+- Crescimento no número de funcionalidades torna o código confuso
+- Equipe maior de desenvolvimento dificulta trabalho em um mesmo projeto
+- Alterações em um módulo impactam outros (ex: erro em consultas pode derrubar login)
+- Testes e deploy se tornam mais arriscados
+
+### Por que evoluir?
+Para modularizar os domínios do sistema e organizar o código por contexto de negócio, mantendo um único projeto, mas mais limpo e manutenível.
+
+---
+
+## FASE 2 – MONÓLITO MODULARIZADO
+
+- **Estilo Arquitetural**: Monolítico  
+- **Padrão Arquitetural**: MVC com separação por módulos internos
+
+### Cenário
+A clínica cresce, há novos serviços como pagamentos online, notificações e várias especialidades médicas. A equipe de desenvolvimento está maior.
+
+### Mudanças
+- Criação de pacotes/módulos separados: consultas, usuários, pagamentos, notificações, login
+- Cada módulo tem seus próprios controllers, services e repositórios
+- Melhor organização interna, ainda com um único deploy
+
+### Motivo para Escalabilidade após Fase 2
+- Alta demanda em certas áreas (ex: login e agendamento simultâneos) causa lentidão geral
+- Manutenção em um módulo exige restart da aplicação inteira
+- Desejo de escalar partes do sistema separadamente
+- Início de operações em múltiplas unidades físicas ou online
+
+### Por que evoluir?
+O sistema precisa permitir deploys independentes, isolamento de falhas e escalabilidade granular. Por isso, é necessário dividir o sistema em serviços autônomos.
+
+---
+
+## FASE 3 – TRANSIÇÃO PARA MICROSSERVIÇOS
+
+- **Estilo Arquitetural**: Microsserviços  
+- **Padrão Arquitetural**: REST + Mensageria
+
+### Cenário
+A aplicação passa a atender múltiplas clínicas, com muitos usuários acessando simultaneamente. É necessário garantir alta disponibilidade e flexibilidade de escalar partes do sistema independentemente.
+
+### Mudanças
+- Serviços independentes: Autenticação, Consultas, Pacientes, Médicos, Pagamentos, Notificações
+- Banco de dados por serviço
+- Comunicação via HTTP (REST) e mensageria (RabbitMQ ou Kafka)
+- API Gateway para autenticação centralizada e roteamento
+
+### Motivo para Escalabilidade após Fase 3
+- Volume de dados muito grande exige filas assíncronas para processar tarefas não críticas (notificações, logs)
+- Integrações externas (ex: sistemas de saúde, gateways de pagamento) trazem latência e instabilidade
+- Requisições simultâneas em larga escala precisam ser balanceadas
+- Necessidade de rastreamento e análise de falhas distribuídas
+
+### Por que evoluir?
+O sistema deve tolerar falhas, continuar funcionando mesmo com serviços fora do ar, e permitir escalar horizontalmente com segurança.
+
+---
+
+## FASE 4 – ARQUITETURA DISTRIBUÍDA RESILIENTE
+
+- **Estilo Arquitetural**: Microsserviços distribuídos com resiliência e observabilidade
+
+### Cenário
+A empresa se torna uma rede nacional de clínicas. Há centenas de milhares de usuários, integração com parceiros e exigência de funcionamento ininterrupto.
+
+### Mudanças
+- Load Balancer para balanceamento de carga (ex: NGINX)
+- Redis para cache de dados críticos
+- RabbitMQ/Kafka para eventos (ex: `ConsultaAgendadaEvent`)
+- Circuit Breaker com Resilience4j para tolerância a falhas
+- Monitoramento com Prometheus, Grafana, ELK Stack
