@@ -50,9 +50,7 @@ Principais tabelas:
 ## 📌 Visão Geral
 Este documento descreve a arquitetura e os componentes principais do Sistema de Consultas Médicas.
 
-Modelamos um sistema monolítico com arquitetura MCV.
-
-O foco está em confiabilidade, segurança e manutenibilidade, adotando uma arquitetura monolítica para facilitar o desenvolvimento e a integração inicial dos módulos do sistema.
+O foco está em confiabilidade, segurança e manutenibilidade, adotando o estilo arquitetural monolítico para facilitar o desenvolvimento e a integração inicial dos módulos do sistema e padrão MVC.
 
 ## 📐 Arquitetura Geral
 
