@@ -124,6 +124,8 @@ Logs e métricas são gerados pela própria aplicação para facilitar o monitor
 - Camada de segurança configurada via Spring Security.
 
 
+![Diagrama-Arquitetura-Inicial](image-1.png)
+
 
 # Roteiro para Evolução do Sistema - Back-end
 
@@ -216,3 +218,5 @@ A empresa se torna uma rede nacional de clínicas. Há centenas de milhares de u
 - RabbitMQ/Kafka para eventos (ex: `ConsultaAgendadaEvent`)
 - Circuit Breaker com Resilience4j para tolerância a falhas
 - Monitoramento com Prometheus, Grafana, ELK Stack
+
+![Diagrama-Arquitetura-Final](image.png)
