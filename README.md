@@ -411,7 +411,6 @@ A pipeline será gerenciada por uma ferramenta de CI (como **GitHub Actions**), 
 
 - **Cobertura mínima:** 80%
 - **Testes unitários:** JUnit 5 (back-end), Jest (React)
-- **Testes de integração:** SpringBootTest
 - **Testes end-to-end (futuro):** Cypress ou Playwright
 
 ---
@@ -450,14 +449,12 @@ A pipeline será gerenciada por uma ferramenta de CI (como **GitHub Actions**), 
 |----------------|--------------------------------------------------------------------------|
 | Desenvolvedor  | Criar branches, seguir padrões de código, escrever testes, fazer PRs     |
 | Revisor        | Analisar PRs, revisar testes, verificar métricas no SonarQube            |
-| QA (se houver) | Automatizar testes, garantir cobertura mínima, sugerir melhorias         |
-| DevOps (se houver) | Gerenciar CI/CD, Docker, deploys, e manter a saúde da infraestrutura |
+| QA             | Automatizar testes, garantir cobertura mínima, sugerir melhorias         |
+| DevOps         | Gerenciar CI/CD, Docker, deploys, e manter a saúde da infraestrutura |
 
 ---
 
 ## 📚 Considerações Finais
-
-Este documento de governança serve como um **manual prático e técnico** para que todos os membros do time desenvolvam com **eficiência, segurança e alinhamento**.
 
 Todas as decisões descritas aqui devem ser revisitadas conforme a evolução do sistema, visando sempre **escalabilidade, manutenibilidade e confiabilidade**.
 
