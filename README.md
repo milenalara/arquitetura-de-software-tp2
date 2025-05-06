@@ -96,6 +96,119 @@ Logs e métricas são gerados pela própria aplicação para facilitar o monitor
 - Armazena usuários, agendamentos, prontuários;
 - Integração via JPA/Hibernate.
 
+#### Modelo Entidade-Relacionamento
+
+![Modelo Entidade-Relacionamento](image-2.png)
+
+#### Script de criação
+
+```sql
+-- Criação do schema
+CREATE SCHEMA IF NOT EXISTS clinica_medica;
+SET search_path TO clinica_medica;
+
+-- Tabela de usuários
+CREATE TABLE IF NOT EXISTS users (
+  user_id BIGINT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(10) CHECK (role IN ('ADMIN', 'DOCTOR', 'PATIENT'))
+);
+
+-- Tabela de pacientes
+CREATE TABLE IF NOT EXISTS patients (
+  patient_id BIGINT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  cpf CHAR(11) NOT NULL UNIQUE,
+  address VARCHAR(255),
+  phone CHAR(11),
+  CONSTRAINT fk_patient_user
+    FOREIGN KEY (patient_id) REFERENCES users(user_id)
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+-- Tabela de médicos
+CREATE TABLE IF NOT EXISTS doctors (
+  doctor_id BIGINT PRIMARY KEY,
+  name VARCHAR(100),
+  cpf CHAR(11),
+  crm CHAR(8),
+  address VARCHAR(255),
+  phone CHAR(11),
+  CONSTRAINT fk_doctor_user
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+-- Tabela de especialidades
+CREATE TABLE IF NOT EXISTS specialties (
+  specialty_id BIGINT PRIMARY KEY,
+  name VARCHAR(45) NOT NULL UNIQUE,
+  description VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+);
+
+-- Tabela de associação entre médicos e especialidades (many-to-many)
+CREATE TABLE IF NOT EXISTS doctors_specialties (
+  doctor_id BIGINT NOT NULL,
+  specialty_id BIGINT NOT NULL,
+  PRIMARY KEY (doctor_id, specialty_id),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+    ON DELETE NO ACTION ON UPDATE NO ACTION,
+  FOREIGN KEY (specialty_id) REFERENCES specialties(specialty_id)
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+-- Tabela de consultas
+CREATE TABLE IF NOT EXISTS appointments (
+  appointment_id BIGINT NOT NULL,
+  date_time TIMESTAMP,
+  doctor_id BIGINT NOT NULL,
+  patient_id BIGINT NOT NULL,
+  status VARCHAR(10) DEFAULT 'SCHEDULED' CHECK (status IN ('SCHEDULED', 'CANCELED', 'COMPLETED')),
+  PRIMARY KEY (appointment_id, doctor_id, patient_id),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+    ON DELETE NO ACTION ON UPDATE NO ACTION,
+  FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+```
+
+#### Índices
+
+Além disso, optamos para implementar alguns índices referentes aos termos mais consultados, para otimizar o sistema:
+
+1. appointments.date_time
+Motivo: consultas por intervalo de tempo (ex: próximas consultas).
+
+```sql
+CREATE INDEX idx_appointments_date_time ON appointments(date_time);
+```
+
+2. doctors.crm e patients.cpf
+Motivo: esses campos podem ser usados para buscas rápidas e são únicos por natureza (ainda que você só tenha UNIQUE no cpf dos pacientes).
+
+```sql
+CREATE UNIQUE INDEX idx_doctors_crm ON doctors(crm);
+CREATE UNIQUE INDEX idx_patients_cpf ON patients(cpf);
+```
+
+3. appointments.doctor_id e appointments.patient_id
+Motivo: melhorar performance nas consultas por médico ou paciente (ex: histórico de consultas).
+
+```sql
+CREATE INDEX idx_appointments_doctor_id ON appointments(doctor_id);
+CREATE INDEX idx_appointments_patient_id ON appointments(patient_id);
+```
+
+4. doctors_specialties.specialty_id
+Motivo: para buscar todos os médicos de uma especialidade.
+
+```sql
+CREATE INDEX idx_doctors_specialties_specialty_id ON doctors_specialties(specialty_id);
+```
+
 ### ✉️ Envio de E-mails
 - Tecnologia: JavaMailSender / SMTP (ex: SendGrid);
 - Envio de e-mails diretamente pelo monólito;
