@@ -220,3 +220,154 @@ A empresa se torna uma rede nacional de clínicas. Há centenas de milhares de u
 - Monitoramento com Prometheus, Grafana, ELK Stack
 
 ![Diagrama-Arquitetura-Final](image.png)
+
+# 📘 Documento de Governança de Desenvolvimento – Sistema de Consultas Médicas – Clínica Vida+Saúde
+
+Este documento define as práticas de governança que guiarão o desenvolvimento do Sistema de Consultas Médicas da Clínica Vida+Saúde, garantindo **padronização, qualidade, segurança e rastreabilidade** em todo o ciclo de vida do software.
+
+---
+
+## 📌 Objetivos da Governança
+
+- **Padronizar o fluxo de desenvolvimento**
+- **Garantir qualidade de código e cobertura de testes**
+- **Reduzir falhas em produção**
+- **Facilitar colaboração entre os membros do time**
+- **Rastrear e documentar decisões técnicas**
+
+---
+
+## 🌿 Git Flow (Fluxo de Branches)
+
+Adotaremos o modelo **Git Flow simplificado**, com as seguintes branches principais:
+
+- `main`: versão estável em produção
+- `develop`: integração contínua das funcionalidades aprovadas
+- `feature/*`: desenvolvimento de novas funcionalidades
+- `bugfix/*`: correções pontuais
+- `hotfix/*`: correções urgentes diretamente na `main`
+
+### 📐 Regras para Git Flow
+
+- Cada **nova funcionalidade** deve partir de `develop` para uma `feature/nome-funcionalidade`
+- Ao concluir, a branch será submetida via **Pull Request**
+- A **integração só ocorrerá após aprovação e testes**
+- **Commits devem ser claros e no padrão:** `feat:`, `fix:`, `refactor:`, `docs:`, etc.
+- Utilizar **Pull Requests com reviewers definidos** (mínimo 1 revisor)
+
+---
+
+## ✅ Critérios de Aprovação de Pull Request
+
+1. **Nome e descrição clara do PR**
+2. **Branch partindo de `develop` ou `main` conforme contexto**
+3. **Todos os testes devem passar**
+4. **Cobertura mínima de 80%**
+5. **Sem duplicação de código**
+6. **Pelo menos 1 aprovação (code review)**
+
+---
+
+## 🔄 Pipeline de Integração Contínua (CI/CD)
+
+A pipeline será gerenciada por uma ferramenta de CI (como **GitHub Actions**), automatizando os seguintes passos:
+
+### 1. **Build e Testes**
+- **Tecnologia:** Maven + JUnit 5
+- Compilação do projeto
+- Execução de todos os testes automatizados
+
+### 2. **Verificação de Qualidade**
+- **Lint e análise estática com:** SonarQube
+  - Integração via plugin do Maven
+  - Verifica:
+    - Cobertura ≥ 80%
+    - Baixa duplicação
+    - Complexidade e code smells
+- **Relatórios gerados com:** JaCoCo
+
+### 3. **Segurança no Pipeline**
+- Autenticação e autorização com **JWT**
+- Senhas com **BCrypt**
+- Validação de dados com **Hibernate Validator**
+- Regras de segurança configuradas com **Spring Security**
+- Políticas de CORS seguras
+
+### 4. **Deploy Automatizado (Homologação)**
+- Empacotamento com **Docker**
+- Orquestração com **Docker Compose**
+- Deploy automático após merge em `develop`
+- Infraestrutura: **Railway** (ou **Render.com** como alternativa)
+- Imagens armazenadas no **DockerHub (privado)**
+
+---
+
+## 📦 Convenções de Código
+
+- **Java:** padrão Google Java Style
+- **React:** ESLint com Airbnb Style Guide
+- **Flutter:** `flutter format` e análise via `dart analyze`
+- Nomeação clara de classes, métodos e variáveis
+- Separação clara entre camadas: `controller`, `service`, `repository`, `dto`, `model`
+
+---
+
+## 🧪 Testes
+
+- **Cobertura mínima:** 80%
+- **Testes unitários:** JUnit 5 (back-end), Jest (React)
+- **Testes de integração:** SpringBootTest
+- **Testes end-to-end (futuro):** Cypress ou Playwright
+
+---
+
+## 🛠 Tecnologias Relacionadas à Governança
+
+| Área                      | Tecnologia/Ferramenta         |
+|---------------------------|-------------------------------|
+| Repositório               | Git + GitHub                  |
+| Pipeline CI/CD            | GitHub Actions                |
+| Análise Estática          | SonarQube + Maven             |
+| Testes de Cobertura       | JaCoCo                        |
+| Containerização           | Docker                        |
+| Deploy                    | Railway ou Render.com         |
+| Armazenamento de Imagem   | DockerHub (privado)           |
+| Segurança de Acesso       | Spring Security + JWT         |
+| Validação                 | Hibernate Validator           |
+| Hash de Senhas            | BCrypt                        |
+
+---
+
+## 📈 Monitoramento Futuro (Evolução)
+
+À medida que o sistema crescer e for modularizado:
+
+- **Logging centralizado:** ELK Stack
+- **Monitoramento de métricas:** Spring Boot Actuator + Prometheus + Grafana
+- **Rastreamento de falhas:** Sentry (front) + Zipkin (back)
+- **Circuit Breaker e resiliência:** Resilience4j
+
+---
+
+## 🔐 Responsabilidades por Perfil
+
+| Perfil         | Responsabilidades Técnicas                                               |
+|----------------|--------------------------------------------------------------------------|
+| Desenvolvedor  | Criar branches, seguir padrões de código, escrever testes, fazer PRs     |
+| Revisor        | Analisar PRs, revisar testes, verificar métricas no SonarQube            |
+| QA (se houver) | Automatizar testes, garantir cobertura mínima, sugerir melhorias         |
+| DevOps (se houver) | Gerenciar CI/CD, Docker, deploys, e manter a saúde da infraestrutura |
+
+---
+
+## 📚 Considerações Finais
+
+Este documento de governança serve como um **manual prático e técnico** para que todos os membros do time desenvolvam com **eficiência, segurança e alinhamento**.
+
+Todas as decisões descritas aqui devem ser revisitadas conforme a evolução do sistema, visando sempre **escalabilidade, manutenibilidade e confiabilidade**.
+
+---
+
+_Clínica Vida+Saúde – Sistema de Consultas Médicas_  
+_Engenharia de Software – PUC Minas_  
+_Profª Angélica Guimarães_
