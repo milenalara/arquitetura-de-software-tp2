@@ -98,7 +98,7 @@ Logs e métricas são gerados pela própria aplicação para facilitar o monitor
 
 #### Modelo Entidade-Relacionamento
 
-![Modelo Entidade Relacionamento](image-2.png)
+![Modelo Entidade Relacionamento](mer.png)
 
 #### Script de criação
 
