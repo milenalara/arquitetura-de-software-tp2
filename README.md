@@ -406,24 +406,6 @@ A pipeline será gerenciada por uma ferramenta de CI (como **GitHub Actions**), 
 - Regras de segurança configuradas com **Spring Security**
 - Políticas de CORS seguras
 
-### 4. **Deploy Automatizado (Homologação)**
-- Empacotamento com **Docker**
-- Orquestração com **Docker Compose**
-- Deploy automático após merge em `develop`
-- Infraestrutura: **Railway** (ou **Render.com** como alternativa)
-- Imagens armazenadas no **DockerHub (privado)**
-
----
-
-## 📦 Convenções de Código
-
-- **Java:** padrão Google Java Style
-- **React:** ESLint com Airbnb Style Guide
-- **Flutter:** `flutter format` e análise via `dart analyze`
-- Nomeação clara de classes, métodos e variáveis
-- Separação clara entre camadas: `controller`, `service`, `repository`, `dto`, `model`
-
----
 
 ## 🧪 Testes
 
