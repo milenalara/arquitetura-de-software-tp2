@@ -437,8 +437,7 @@ A pipeline será gerenciada por uma ferramenta de CI (como **GitHub Actions**), 
 À medida que o sistema crescer e for modularizado:
 
 - **Logging centralizado:** ELK Stack
-- **Monitoramento de métricas:** Spring Boot Actuator + Prometheus + Grafana
-- **Rastreamento de falhas:** Sentry (front) + Zipkin (back)
+- **Monitoramento de métricas:**  Prometheus + Grafana
 - **Circuit Breaker e resiliência:** Resilience4j
 
 ---
