@@ -424,7 +424,7 @@ A pipeline será gerenciada por uma ferramenta de CI (como **GitHub Actions**), 
 | Análise Estática          | SonarQube + Maven             |
 | Testes de Cobertura       | JaCoCo                        |
 | Containerização           | Docker                        |
-| Deploy                    | Railway ou Render.com         |
+| Deploy                    | AWS        |
 | Armazenamento de Imagem   | DockerHub (privado)           |
 | Segurança de Acesso       | Spring Security + JWT         |
 | Validação                 | Hibernate Validator           |
